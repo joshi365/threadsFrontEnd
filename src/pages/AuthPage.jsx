@@ -7,10 +7,6 @@ const AuthPage = () => {
 
   const authState = useSelector((state) => state?.authDetails?.authState)
 
-  useEffect(()=> {
-    console.log(authState,"authState")
-  },[authState])
-
   return (
     <div>
       {authState === "login" ? <LoginCard /> : <SignupCard />}

@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Flex,
   Box,
@@ -14,42 +12,17 @@ import {
   Heading,
   Text,
   useColorModeValue,
-  Link,
-  useToast,
+  Link
 } from '@chakra-ui/react'
-import { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '../redux/authSlice'
-import axiosInstance from '../assets/axiosConfig'
+import useSignupCard from './useSignupCard'
 
 export default function SignupCard() {
-  const [showPassword, setShowPassword] = useState(false)
+
   const dispatch = useDispatch()
-  let toast = useToast()
-
-  const [inputs, setInputs] = useState({
-    name: "",
-    username: "",
-    email: "",
-    password: ""
-  })
-
-  const handleSignUp = async () => {
-    axiosInstance.post("/api/users/signup", inputs).then((res) => {
-      console.log(res, "resss")
-    }).catch((err) => {
-      console.log(err,"errr")
-      toast({
-        title:"Error",
-        description:err.response.data.message,
-        status:"error",
-        duration:3000,
-        isClosable:true
-      })
-    })
-  }
-
+  const { showPassword, setShowPassword, setInputs, handleSignUp, inputs } = useSignupCard()
 
   return (
     <Flex

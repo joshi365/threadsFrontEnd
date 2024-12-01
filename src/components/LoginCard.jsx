@@ -7,7 +7,6 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  HStack,
   InputRightElement,
   Stack,
   Button,
@@ -16,20 +15,21 @@ import {
   useColorModeValue,
   Link,
 } from '@chakra-ui/react'
-import { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '../redux/authSlice'
+import useLoginCard from './useLoginCard'
 
 export default function LoginCard() {
-  const [showPassword, setShowPassword] = useState(false)
+
   const dispatch = useDispatch()
+  const { loginInput, setLoginInput, handleLogin, showPassword, setShowPassword } = useLoginCard()
 
   return (
     <Flex
       align={'center'}
       justify={'center'}
-  >
+    >
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
@@ -42,19 +42,21 @@ export default function LoginCard() {
           boxShadow={'lg'}
           p={8}
           w={{
-            base:"full",
-            sm:"400px"
+            base: "full",
+            sm: "400px"
           }}
->
+        >
           <Stack spacing={4}>
             <FormControl id="email" isRequired>
               <FormLabel>Username</FormLabel>
-              <Input type="text" />
+              <Input type="text"
+                value={loginInput.username}
+                onChange={(e) => setLoginInput({ ...loginInput, username: e.target.value })} />
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? 'text' : 'password'} />
+                <Input value={loginInput.password} onChange={(e) => setLoginInput({ ...loginInput, password: e.target.value })} type={showPassword ? 'text' : 'password'} />
                 <InputRightElement h={'full'}>
                   <Button
                     variant={'ghost'}
@@ -68,18 +70,19 @@ export default function LoginCard() {
               <Button
                 loadingText="Submitting"
                 size="lg"
-                bg={useColorModeValue("gray.600","gray.700")}
+                onClick={handleLogin}
+                bg={useColorModeValue("gray.600", "gray.700")}
                 color={'white'}
                 _hover={{
-                  bg: useColorModeValue("gray.700","gray.800")
+                  bg: useColorModeValue("gray.700", "gray.800")
                 }}>
                 Login
               </Button>
               <Stack pt={6}>
-              <Text align={'center'}>
-                Don't have an acoount? <Link onClick={()=> {dispatch(setAuthState("signup"))}} color={'blue.400'}>Sign Up</Link>
-              </Text>
-            </Stack>
+                <Text align={'center'}>
+                  Don't have an acoount? <Link onClick={() => { dispatch(setAuthState("signup")) }} color={'blue.400'}>Sign Up</Link>
+                </Text>
+              </Stack>
             </Stack>
           </Stack>
         </Box>

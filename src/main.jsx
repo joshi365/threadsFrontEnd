@@ -6,7 +6,8 @@ import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react'
 import { mode } from "@chakra-ui/theme-tools"
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from "react-redux"
-import { store } from './redux/store'
+import { persistor, store } from './redux/store'
+import { PersistGate } from 'redux-persist/integration/react'
 
 const styles = {
   global: (props) => ({
@@ -37,7 +38,9 @@ createRoot(document.getElementById('root')).render(
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <Provider store={store}>
-          <App />
+          <PersistGate loading={null} persistor={persistor}>
+            <App />
+          </PersistGate>
         </Provider>
       </ChakraProvider>
     </BrowserRouter>

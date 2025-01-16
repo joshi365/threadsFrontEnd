@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import './App.css'
 import { Container } from '@chakra-ui/react'
 import { Navigate, Route, Routes } from 'react-router-dom'
@@ -9,6 +8,7 @@ import HomePage from './pages/HomePage'
 import AuthPage from './pages/AuthPage'
 import { useSelector } from "react-redux"
 import LogoutButton from './components/LogoutButton';
+import UpdateProfile from './pages/UpdateProfile'
 
 function App() {
 
@@ -22,6 +22,7 @@ function App() {
         <Routes>
           <Route path='/' element={userLoggedInOrNot ? <HomePage /> : <Navigate to="/auth" />} />
           <Route path='/auth' element={!userLoggedInOrNot ? <AuthPage /> : <Navigate to="/" />} />
+          <Route path='/update' element={userLoggedInOrNot ? <UpdateProfile /> : <Navigate to="/auth" />} />
           <Route path='/:username' element={<UserPage />} />
           <Route path='/:username/post/:pid' element={<PostPage />} />
         </Routes>

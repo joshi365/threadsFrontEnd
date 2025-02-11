@@ -9,24 +9,32 @@ import AuthPage from './pages/AuthPage'
 import { useSelector } from "react-redux"
 import LogoutButton from './components/LogoutButton';
 import UpdateProfile from './pages/UpdateProfile'
+import CreatePost from './components/CreatePost'
 
 function App() {
 
   const loggedInUserDetails = useSelector((state) => state?.authDetails?.userDetails)
-  const userLoggedInOrNot = Object?.keys(loggedInUserDetails)?.length > 0;
+  const userLoggedIn = Object?.keys(loggedInUserDetails)?.length > 0;
 
   return (
     <>
       <Container maxW={"620px"}>
         <Header />
         <Routes>
-          <Route path='/' element={userLoggedInOrNot ? <HomePage /> : <Navigate to="/auth" />} />
-          <Route path='/auth' element={!userLoggedInOrNot ? <AuthPage /> : <Navigate to="/" />} />
-          <Route path='/update' element={userLoggedInOrNot ? <UpdateProfile /> : <Navigate to="/auth" />} />
-          <Route path='/:username' element={<UserPage />} />
+          <Route path='/' element={userLoggedIn ? <HomePage /> : <Navigate to="/auth" />} />
+          <Route path='/auth' element={!userLoggedIn ? <AuthPage /> : <Navigate to="/" />} />
+          <Route path='/update' element={userLoggedIn ? <UpdateProfile /> : <Navigate to="/auth" />} />
+          <Route path='/:username' element={
+            userLoggedIn ? (
+              <>
+                <UserPage />
+                <CreatePost />
+              </>
+            ) : <UserPage />
+          } />
           <Route path='/:username/post/:pid' element={<PostPage />} />
         </Routes>
-        {userLoggedInOrNot ? <LogoutButton /> : ""}
+        {userLoggedIn ? <LogoutButton /> : ""}
       </Container>
     </>
   )

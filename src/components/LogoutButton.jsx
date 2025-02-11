@@ -13,6 +13,9 @@ const LogoutButton = () => {
     const handleLogout = async () => {
         try {
             const res = await axiosInstance.post("/api/users/logout")
+            if(res.error){
+                toast("Error", res?.data?.error, "error")
+            }
             localStorage.removeItem("user-data")
             disapatch(setUserDetails({}))
 

@@ -3,11 +3,13 @@ import useShowToastMessage from "../components/useShowToast";
 import axiosInstance from "../assets/axiosConfig";
 import { useSelector, useDispatch } from 'react-redux';
 import { setUserDetails } from "../redux/authSlice"
+import { useNavigate } from "react-router-dom";
 
 const useUpdateProfile = () => {
     const userData = useSelector((state) => state?.authDetails?.userDetails)
-
-    const [imageUrl, setImageUrl] = useState("")
+    const [updating, setUpdating] = useState(false)
+    const fileRef = useRef(null)
+    const navigate = useNavigate()
 
     const [profileData, setProfileData] = useState({
         name: userData.name,
@@ -17,13 +19,13 @@ const useUpdateProfile = () => {
         password: "",
     })
 
-    const fileRef = useRef(null)
     const showToast = useShowToastMessage()
     const dispatach = useDispatch()
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, imageUrl) => {
         e.preventDefault();
-
+        if (updating) return
+        setUpdating(true)
         try {
             const payload = { ...profileData, profilepic: imageUrl };
             const updateProfileRes = await axiosInstance.put(
@@ -32,9 +34,11 @@ const useUpdateProfile = () => {
             );
             dispatach(setUserDetails(updateProfileRes.data.user))
             showToast("Success", "Profile updated successfully", "success")
+            navigate(`/${userData.username}`)
         } catch (error) {
-            console.error("Error updating profile:", error.response?.data || error.message);
-            showToast("Error", error, "error")
+            showToast("Error", error.response?.data?.message || error.message, "error");
+        } finally {
+            setUpdating(false)
         }
     };
 
@@ -42,23 +46,9 @@ const useUpdateProfile = () => {
         fileRef.current?.click();
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader()
 
-            reader.onloadend = () => {
-                setImageUrl(reader.result)
-            }
 
-            reader.readAsDataURL(file)
-        } else {
-            showToast("Invalid file type", "please select an image file", "error")
-            setImageUrl("null")
-        }
-    }
-
-    return { handleSubmit, profileData, setProfileData, handleFileClick, fileRef, handleImageChange, imageUrl, userData }
+    return { handleSubmit, profileData, setProfileData, userData, updating, fileRef, handleFileClick, navigate }
 }
 
 export default useUpdateProfile

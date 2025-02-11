@@ -1,26 +1,8 @@
-import { VStack, Box, Flex, Avatar, Text, Link, Menu, MenuButton, Portal, MenuList, MenuItem, useToast, Button } from "@chakra-ui/react"
-import { BsInstagram } from "react-icons/bs"
+import { VStack, Box, Flex, Avatar, Text, Link, Menu, MenuButton, Portal, MenuList, MenuItem, Button } from "@chakra-ui/react"
 import { CgMoreO } from "react-icons/cg"
-import { useSelector } from "react-redux"
-import { Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
-const UserHeader = ({ user }) => {
-
-    const toast = useToast()
-    const currentUser = useSelector((state) => state?.authDetails?.user)
-
-    const copyUrl = () => {
-        const currentUrl = window.location.href
-        navigator.clipboard.writeText(currentUrl).then(() => {
-            toast({
-                title: 'Done',
-                description: "Profile link copied.",
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            })
-        })
-    }
+const UserHeader = ({ user, currentUser, copyUrl, following, followUnFollowUser, updating }) => {
 
     return (
         <VStack gap={4} alignItems={"start"}>
@@ -31,12 +13,10 @@ const UserHeader = ({ user }) => {
                     </Text>
                     <Flex gap={2} alignItems={"center"}>
                         <Text fontSize={"sm"}>{user?.username}</Text>
-                        <Text
-                            fontSize={"xs"} bg={"gray.dark"} borderRadius={"full"} color={"gray.light"} p={1}>threads.net</Text>
                     </Flex>
                 </Box>
                 <Box>
-                    <Avatar name="Mark Chutiya Lund" src={user?.profilepic} size={{ base: "md", md: "xl" }}
+                    <Avatar src={user?.profilepic} size={{ base: "md", md: "xl" }}
                     />
                 </Box>
             </Flex>
@@ -48,16 +28,16 @@ const UserHeader = ({ user }) => {
                     </RouterLink>
                 )
             }
+
+            {currentUser?._id !== user?._id && <Button isLoading={updating} onClick={followUnFollowUser} size={"sm"}>{following ? "Unfollow" : "Follow"}</Button>}
+
             <Flex w={"full"} justifyContent={"space-between"}>
                 <Flex gap={2} alignItems={"center"}>
-                    <Text color={"gray.light"}>{user?.following?.length} followers</Text>
+                    <Text color={"gray.light"}>{user?.followers?.length} followers</Text>
                     <Box w="1" h="1" bg={"gray.light"} borderRadius={"full"}></Box>
                     <Link color={"gray.light"} >instagram.com</Link>
                 </Flex>
                 <Flex>
-                    <Box className="icon-container">
-                        <BsInstagram size={24} cursor={"pointer"} />
-                    </Box>
                     <Box className="icon-container">
                         <Menu>
                             <MenuButton>

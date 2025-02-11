@@ -11,12 +11,14 @@ import {
   Center
 } from '@chakra-ui/react'
 import useUpdateProfile from './useUpdateProfile'
+import useUploadImage from '../helpers/useUploadImage'
 
 export default function UpdateProfile() {
-  const { handleSubmit, setProfileData, profileData, handleFileClick, fileRef, handleImageChange, imageUrl, userData } = useUpdateProfile()
+  const { handleSubmit, profileData, setProfileData, userData, updating, fileRef, handleFileClick,navigate } = useUpdateProfile()
+  const { handleImageChange, imageUrl } = useUploadImage()
 
   return (
-    <form onSubmit={(e) => handleSubmit(e)}>
+    <form onSubmit={(e) => handleSubmit(e, imageUrl)}>
       <Flex
         align={'center'}
         justify={'center'}
@@ -98,6 +100,7 @@ export default function UpdateProfile() {
           <Stack spacing={6} direction={['column', 'row']}>
             <Button
               bg={'red.400'}
+              onClick={() => navigate(`/${userData.username}`)}
               color={'white'}
               w="full"
               _hover={{
@@ -106,6 +109,7 @@ export default function UpdateProfile() {
               Cancel
             </Button>
             <Button
+              isLoading={updating}
               bg={'green.400'}
               type="submit"
               color={'white'}

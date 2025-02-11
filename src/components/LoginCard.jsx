@@ -23,7 +23,7 @@ import useLoginCard from './useLoginCard'
 export default function LoginCard() {
 
   const dispatch = useDispatch()
-  const { loginInput, setLoginInput, handleLogin, showPassword, setShowPassword } = useLoginCard()
+  const { loginInput, setLoginInput, handleLogin, showPassword, setShowPassword, loading } = useLoginCard()
 
   return (
     <Flex
@@ -69,6 +69,7 @@ export default function LoginCard() {
             <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting"
+                isLoading={loading}
                 size="lg"
                 onClick={handleLogin}
                 bg={useColorModeValue("gray.600", "gray.700")}

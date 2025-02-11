@@ -1,43 +1,46 @@
-import { useState, useEffect } from "react";
-import UserHeader from "../components/UserHeader"
-import UserPost from "../components/UserPost"
-
-import axiosInstance from "../assets/axiosConfig";
-import { useParams } from "react-router-dom";
-import useShowToastMessage from "../components/useShowToast";
+import UserHeader from "../components/UserHeader";
+import useUserPage from "./useUserPage";
+import { Spinner } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import Post from '../components/Post';
+import { useSelector } from "react-redux";
 
 const UserPage = () => {
 
-  const [user, setUser] = useState(null)
-  const { username } = useParams()
-  const showToast = useShowToastMessage()
+  const { user, currentUser, copyUrl, following, followUnFollowUser, updating, loading } = useUserPage()
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await axiosInstance?.get(`/api/users/profile/${username}`)
-        if (res?.data?.error) {
-          showToast("Error", res.data.error, "error")
-          return
-        }
-        setUser(res.data)
-      } catch (error) {
-        console.log(error.message,"edadwawd")
-        showToast("Error", "User not found", "error")
-      }
-    }
-    getUser()
-  }, [username])
-
-  if(!user) return null
-
+  const allPost = useSelector((state) => state?.profile?.posts)
 
   return (
     <>
-      <UserHeader user = {user} />
-      <UserPost likes={69} replies={481} postImg={"/post.png"} postTitle={"Let's talk about threads."} />
+      {
+        !user && loading ?
+          <Flex justifyContent={"center"}>
+            <Spinner size="xl" />
+          </Flex>
+          :
+          !user && !loading
+            ? <h1>User not found</h1>
+            :
+            <>
+              <UserHeader
+                user={user}
+                currentUser={currentUser}
+                copyUrl={copyUrl}
+                following={following}
+                followUnFollowUser={followUnFollowUser}
+                updating={updating}
+              />
+              {
+                allPost?.map((post) => (
+                  <Post key={post?._id} post={post} userName={post?.postedBy?.username} />
+                ))
+              }
+            </>
+      }
     </>
   )
+
 }
 
 export default UserPage
